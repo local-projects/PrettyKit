@@ -31,7 +31,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PrettyDrawing.h"
 
-#define shadow_margin           4
+#define shadow_margin           8
 #define default_shadow_opacity  0.7
 
 #define contentView_margin      2
@@ -199,11 +199,11 @@ typedef enum {
 {
     [PrettyDrawing drawLineAtHeight:CGRectGetMaxY(rect)-1
                                rect:rect
-                              color:self.cell.customSeparatorColor
+                              color:[UIColor colorWithWhite:0.0 alpha:0.15] // NYSCI
                               width:0.5];
     [PrettyDrawing drawLineAtHeight:CGRectGetMaxY(rect)-0.5
                                rect:rect
-                              color:[UIColor whiteColor] 
+                              color:[UIColor colorWithWhite:1.0 alpha:0.25] // NYSCI
                               width:1];
 
 }
@@ -236,8 +236,10 @@ typedef enum {
     CGContextSetLineWidth(ctx, 5);
 
     UIColor *shadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:self.cell.shadowOpacity];
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 3, shadowColor.CGColor);
-
+    //CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 3, shadowColor.CGColor);
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 5.0, shadowColor.CGColor); // Tweaked for NYSCI
+    
+    
     CGContextStrokePath(ctx);
     
     CGContextRestoreGState(ctx);
@@ -268,7 +270,8 @@ typedef enum {
 
     if (shadow) {
         UIColor *shadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:self.cell.shadowOpacity];
-        CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, shadowColor.CGColor);
+        //CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, shadowColor.CGColor);
+        CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 5.0, shadowColor.CGColor); // Tweaked for NYSCI
     }   
     CGContextSetStrokeColorWithColor(ctx, self.cell.borderColor.CGColor);
     CGContextSetLineWidth(ctx, 2 - shadowShift);
