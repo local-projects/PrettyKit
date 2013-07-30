@@ -123,3 +123,5 @@ Please, please contribute with this project! Fork it, improve it and make me a p
     - PrettyNavigationBar can now have rounded corners
     - New widget PrettyToolbar (replacing UIToolbar)
 - 2012/04/12: Initial release (v0.1.0)
+
+(Fork test)
