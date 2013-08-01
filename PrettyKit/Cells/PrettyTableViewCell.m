@@ -158,19 +158,20 @@ typedef enum {
 }
 
 - (void) drawBackground:(CGRect)rect
-{
-    if (self.behavior == CellBackgroundBehaviorSelected 
-        && self.cell.selectionStyle != UITableViewCellSelectionStyleNone)
-    {
-        [self drawGradient:rect type:CellBackgroundGradientSelected];
-        return;
-    }
+{   
     
-    if (self.cell.gradientStartColor && self.cell.gradientEndColor)
-    {
-        [self drawGradient:rect type:CellBackgroundGradientNormal];
-        return;
-    }
+//    if (self.behavior == CellBackgroundBehaviorSelected 
+//        && self.cell.selectionStyle != UITableViewCellSelectionStyleNone)
+//    {
+//        [self drawGradient:rect type:CellBackgroundGradientSelected];
+//        return;
+//    }
+//    
+//    if (self.cell.gradientStartColor && self.cell.gradientEndColor)
+//    {
+//        [self drawGradient:rect type:CellBackgroundGradientNormal];
+//        return;
+//    }
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
@@ -181,7 +182,12 @@ typedef enum {
 
     CGContextAddPath(ctx, path);
 
-    CGContextSetFillColorWithColor(ctx, self.cell.backgroundColor.CGColor);
+    if ((self.cell.selectedBackgroundColor) && (self.behavior == CellBackgroundBehaviorSelected)) {
+        CGContextSetFillColorWithColor(ctx, self.cell.selectedBackgroundColor.CGColor);
+    }
+    else {
+        CGContextSetFillColorWithColor(ctx, self.cell.backgroundColor.CGColor);
+    }
     CGContextFillPath(ctx);
 
     CGContextRestoreGState(ctx);
@@ -367,7 +373,7 @@ typedef enum {
 @synthesize position, dropsShadow, borderColor, tableViewBackgroundColor;
 @synthesize customSeparatorColor, selectionGradientStartColor, selectionGradientEndColor;
 @synthesize cornerRadius;
-@synthesize customBackgroundColor, gradientStartColor, gradientEndColor;
+@synthesize customBackgroundColor, gradientStartColor, gradientEndColor, selectedBackgroundColor;
 @synthesize shadowOpacity, customSeparatorStyle;
 
 
@@ -382,6 +388,7 @@ typedef enum {
     self.customBackgroundColor = nil;
     self.gradientStartColor = nil;
     self.gradientEndColor = nil;
+    self.selectedBackgroundColor = nil;
     
     [super dealloc];
 }
