@@ -145,6 +145,10 @@ typedef enum {
  Change this property to override the background color in plain table views. */
 @property (nonatomic, retain) UIColor *customBackgroundColor;
 
+
+@property (nonatomic, retain) UIColor *selectedBackgroundColor;
+
+
 /** Specifies the background gradient start color to use. */
 @property (nonatomic, retain) UIColor *gradientStartColor;
 
@@ -166,6 +170,8 @@ typedef enum {
  
  This property has a clearColor by default.  */
 @property (nonatomic, retain) UIColor *tableViewBackgroundColor;
+
+
 
 /** Specifies if a custom separator should be drawn. 
  
