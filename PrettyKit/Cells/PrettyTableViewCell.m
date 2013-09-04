@@ -31,14 +31,17 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PrettyDrawing.h"
 
-#define shadow_margin           8
+#define shadow_radius           7
+#define shadow_margin           7
 #define default_shadow_opacity  0.7
 
 #define contentView_margin      2
 
 #define default_radius          10
 
-#define default_border_color                    [UIColor colorWithHex:0xBCBCBC]
+
+//[UIColor colorWithHex:0xBCBCBC]
+#define default_border_color                    [UIColor colorWithWhite:0 alpha:0.85]
 #define default_separator_color                 [UIColor colorWithHex:0xCDCDCD] 
 
 #define default_selection_gradient_start_color  [UIColor colorWithHex:0x0089F9]
@@ -216,7 +219,7 @@ typedef enum {
 
 - (void) drawLineSeparator:(CGRect)rect 
 {
-    switch (self.cell.customSeparatorStyle) 
+    switch (self.cell.customSeparatorStyle)
     {
         case UITableViewCellSeparatorStyleSingleLine:
             [self drawSingleLineSeparator:rect];
@@ -234,17 +237,19 @@ typedef enum {
     {
         return;
     }
+
+    UIColor *shadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:self.cell.shadowOpacity];    
     
     CGContextSaveGState(ctx);
     CGContextMoveToPoint(ctx, CGRectGetMinX(rect), CGRectGetMinY(rect));
     CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMinY(rect));
-    CGContextSetStrokeColorWithColor(ctx, self.cell.borderColor.CGColor);
+    CGContextSetStrokeColorWithColor(ctx, [UIColor redColor].CGColor);
     CGContextSetLineWidth(ctx, 5);
 
-    UIColor *shadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:self.cell.shadowOpacity];
-    //CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 3, shadowColor.CGColor);
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 5.0, shadowColor.CGColor); // Tweaked for NYSCI
-    
+
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), shadow_radius, shadowColor.CGColor); // Tweaked for NYSCI
+                                                                                          //    CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
+//    CGContextFillPath(ctx);
     
     CGContextStrokePath(ctx);
     
@@ -274,14 +279,22 @@ typedef enum {
     CGPathRef path = [self createRoundedPath:innerRect];
     CGContextAddPath(ctx, path);
 
+        UIColor *shadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:self.cell.shadowOpacity];    
     if (shadow) {
-        UIColor *shadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:self.cell.shadowOpacity];
-        //CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, shadowColor.CGColor);
-        CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 5.0, shadowColor.CGColor); // Tweaked for NYSCI
-    }   
-    CGContextSetStrokeColorWithColor(ctx, self.cell.borderColor.CGColor);
-    CGContextSetLineWidth(ctx, 2 - shadowShift);
-    CGContextStrokePath(ctx);
+
+        CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), shadow_radius, shadowColor.CGColor);
+        //CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 5.0, shadowColor.CGColor); // Tweaked for NYSCI
+    }
+    
+    //CGContextSetStrokeColorWithColor(ctx, [UIColor colorWithWhite:0 alpha:.1].CGColor);
+    //    CGContextSetLineWidth(ctx, 2 - shadowShift);
+    //CGContextSetLineWidth(ctx, 20);
+    //    CGContextStrokePath(ctx);
+    CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
+    CGContextFillPath(ctx);
+    
+    // Now mask the stroke
+    
     
     CGContextRestoreGState(ctx);
 }
@@ -414,7 +427,6 @@ typedef enum {
     if (self) {
 
         [self.contentView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionOld context:nil];
-
         
         PrettyTableViewCellBackground *bg = [[PrettyTableViewCellBackground alloc] initWithFrame:self.frame 
                                                                                   behavior:CellBackgroundBehaviorNormal];
@@ -482,9 +494,10 @@ typedef enum {
     self.position = [PrettyTableViewCell positionForTableView:tableView indexPath:indexPath];
 }
 
+
 // Avoids contentView's frame auto-updating. It calculates the best size, taking
 // into account the cell's margin and so.
-- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context 
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"frame"]) 
     {        
@@ -512,6 +525,18 @@ typedef enum {
                                      originalFrame.size.height- contentView_margin*2 - [PrettyTableViewCell neededHeightForPosition:self.position tableStyle:_tableViewStyle]);
             contentView.frame = rect;
         }
+        
+        
+        // Adjust overall position
+//        CGRect frameRect = CGRectMake(self.frame.origin.x,
+//                                      self.frame.origin.y - 20,
+//                                      self.frame.size.width,
+//                                      self.frame.size.height);
+        
+        //        [super setFrame:frameRect];
+        
+        //self.frame.size.width -= 2 * inset;
+        
     }
 }
 
@@ -590,7 +615,7 @@ typedef enum {
     }
     
     CGRect maskRect = CGRectMake(0, 0, 
-                                 self.innerFrame.size.width, 
+                                 self.innerFrame.size.width,
                                  self.innerFrame.size.height);
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:maskRect
@@ -654,6 +679,9 @@ typedef enum {
     
     return gradient;
 }
+
+
+
 
 #pragma mark - Deprecated stuff
 
